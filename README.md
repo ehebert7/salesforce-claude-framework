@@ -12,23 +12,63 @@ A development framework that enhances Claude Code for Salesforce projects with a
 | **Session Persistence** | Dev docs system maintains context across Claude sessions |
 | **Workflow Agents** | Specialized agents for planning and test generation |
 
-## Quick Start
+## Installation
 
-### 1. Copy to Your Project
+### Option 1: Ask Claude to Install It (Easiest)
 
-```bash
-git clone https://github.com/ehebert7/salesforce-claude-framework.git
-cd salesforce-claude-framework
+In Claude Code, simply say:
 
-# Copy to your Salesforce project
-cp -r .claude /path/to/your/project/
-cp -r dev /path/to/your/project/
-cp CLAUDE.md /path/to/your/project/
+```
+Install the Salesforce framework from https://github.com/ehebert7/salesforce-claude-framework
 ```
 
-### 2. Run Setup
+Claude will clone the repo and copy the framework files to your current project.
 
-In Claude Code, run:
+### Option 2: Install to a Specific Project
+
+```bash
+# Clone the framework
+git clone https://github.com/ehebert7/salesforce-claude-framework.git
+
+# Copy to your Salesforce project
+cp -r salesforce-claude-framework/.claude /path/to/your/project/
+cp -r salesforce-claude-framework/dev /path/to/your/project/
+cp salesforce-claude-framework/CLAUDE.md /path/to/your/project/
+```
+
+### Option 3: Install Globally
+
+Install to your home directory so it's available in all projects:
+
+```bash
+# Clone the framework
+git clone https://github.com/ehebert7/salesforce-claude-framework.git
+
+# Copy to global Claude config
+cp -r salesforce-claude-framework/.claude ~/.claude/
+cp -r salesforce-claude-framework/dev ~/dev/
+```
+
+**Note:** Global installation makes the framework available everywhere, but project-specific `CLAUDE.md` files will override the global one.
+
+### Option 4: Install via Claude to Any Directory
+
+In Claude Code, you can specify where to install:
+
+```
+Install the Salesforce framework from https://github.com/ehebert7/salesforce-claude-framework to /path/to/my/project
+```
+
+Or install globally:
+
+```
+Install the Salesforce framework from https://github.com/ehebert7/salesforce-claude-framework globally to my home directory
+```
+
+## Post-Installation Setup
+
+After installing, run the setup wizard:
+
 ```
 /setup
 ```
@@ -39,12 +79,18 @@ The setup wizard will:
 - Configure skill detection triggers
 - Customize CLAUDE.md for your project
 
-### 3. Start Developing
+## Quick Start
 
-The framework is now active. Try:
+Once installed, try:
+
 ```
 "Create an Apex trigger for Account that validates email addresses"
 ```
+
+The framework will:
+1. Detect Salesforce keywords
+2. Suggest relevant skills (if you have them)
+3. Check your code for anti-patterns after editing
 
 ## What's Included
 
