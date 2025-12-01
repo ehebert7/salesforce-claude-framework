@@ -81,29 +81,67 @@ The framework detects Salesforce keywords in your prompts and shows contextual r
 
 Pre-built agents for common Salesforce tasks:
 
-| Agent | Use Case |
-|-------|----------|
-| `apex-code-reviewer` | Review Apex for bulkification, governor limits, security |
-| `test-class-generator` | Generate test classes with 85%+ coverage |
-| `agentforce-debugger` | Troubleshoot Agentforce agent issues |
-| `strategic-plan-architect` | Plan large features before coding |
+#### `apex-code-reviewer`
+Deep code review for Apex classes, triggers, and tests. Checks for:
+- Bulkification (handles 200+ records)
+- Governor limits (SOQL/DML outside loops)
+- Security (CRUD/FLS checks, no SOQL injection)
+- Error handling and logging
+- Test coverage (85%+ with meaningful assertions)
+- Architecture patterns (trigger handler, service layer, selector)
 
-### 3. Slash Commands
+#### `test-class-generator`
+Generates comprehensive Apex test classes with:
+- `@TestSetup` method with test data
+- Positive and negative scenario tests
+- Bulk tests (200+ records)
+- Trigger recursion prevention tests
+- `System.assert` in every test method
+- 85%+ coverage target
 
-| Command | Description |
-|---------|-------------|
-| `/dev-docs` | Create implementation tracking docs for a task |
-| `/dev-docs-update` | Update progress before ending a session |
+#### `agentforce-debugger`
+Troubleshoots Agentforce Service Agent issues by checking:
+- Topic matching and classification
+- Action configuration
+- Knowledge grounding / RAG retrieval
+- Prompt template effectiveness
+- Channel-specific formatting
+- Conversation context handling
 
-### 4. Dev Docs System
+#### `strategic-plan-architect`
+Creates implementation plans for large features:
+- Gathers requirements and analyzes existing codebase
+- Identifies affected objects, fields, and components
+- Creates phased implementation plan with risks/mitigations
+- Generates dev docs files for tracking
 
-Prevents context loss during long implementations:
+### 3. Dev Docs System
 
+Prevents context loss during long implementations by creating persistent documentation.
+
+#### `/dev-docs` command
+Creates a documentation folder for your current task:
+```
+dev/active/[task-name]/
+├── [task-name]-plan.md      # Implementation roadmap
+├── [task-name]-context.md   # Current state, decisions, next steps
+└── [task-name]-tasks.md     # Granular task checklist
+```
+
+#### `/dev-docs-update` command
+Updates documentation before ending a session:
+- Sets "Last Updated" timestamp
+- Updates "Current State" with progress
+- Updates "Next Steps" for the next session
+- Records important decisions made
+- Moves completed tasks to "Completed" section
+
+#### Workflow
 1. **Start task** - `"Build opportunity forecasting feature"`
 2. **Create docs** - Run `/dev-docs`
 3. **Work** - Claude updates docs as you progress
 4. **End session** - Run `/dev-docs-update`
-5. **Resume** - Next session reads `dev/active/` and continues
+5. **Resume** - Next session reads `dev/active/` and continues where you left off
 
 ## Customization
 
