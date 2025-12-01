@@ -1,281 +1,121 @@
-# Claude Code Framework - Setup Guide
+# Setup Guide
 
-## Quick Start (This Project)
+## Quick Start
 
-The framework is **already active** in this DEVTOOLS folder. Just start coding!
-
-### Test It Out
-
-Try one of these prompts to see the framework in action:
-
-1. **Apex Development:**
+1. **Copy framework to your project:**
+   ```bash
+   cp -r .claude /path/to/your/project/
+   cp -r dev /path/to/your/project/
+   cp CLAUDE.md /path/to/your/project/
    ```
-   "Create an Apex trigger for the Account object that validates email addresses"
+
+2. **Start using it:**
    ```
-   Watch: `apex-best-practices` skill auto-suggested
-
-2. **LWC Development:**
+   "Create an Apex trigger for Account that validates email addresses"
    ```
-   "Create a Lightning Web Component to display account details"
-   ```
-   Watch: `lwc-dev-guidelines` skill auto-suggested
 
-3. **Flow Design:**
-   ```
-   "Design a screen flow for case creation"
-   ```
-   Watch: `salesforce-flow-architect` skill auto-suggested
+That's it! The framework will automatically suggest relevant skills based on your prompts.
 
-4. **Large Task:**
-   ```
-   "Help me implement a full opportunity management feature with custom objects, triggers, and LWC components"
-   ```
-   Use: `/dev-docs` command to create implementation tracking docs
+## What You Get
 
----
+### Skill Auto-Suggestion Hooks
 
-## Copy to Another Project
+The hooks in `.claude/hooks/` analyze your prompts and suggest skills:
 
-### Quick Copy Command
+**userPromptSubmit.ts** - Runs before Claude sees your message:
+- Scans for keywords like "apex", "trigger", "lwc", "flow"
+- Suggests relevant skills if installed
 
-```bash
-# From another project directory, run:
-cp -r "c:/Users/ellio/Desktop/Consulting/Cloud Beacon/Keynode/DEVTOOLS/.claude" .
-cp -r "c:/Users/ellio/Desktop/Consulting/Cloud Beacon/Keynode/DEVTOOLS/dev" .
-cp "c:/Users/ellio/Desktop/Consulting/Cloud Beacon/Keynode/DEVTOOLS/CLAUDE.md" .
-```
+**stopEvent.ts** - Runs after Claude edits files:
+- Shows self-check reminders for common patterns
+- Example: After editing `.cls` → reminds about bulkification
 
-### What Gets Copied
-- `.claude/` - Hooks, agents, commands
-- `dev/` - Documentation templates
-- `CLAUDE.md` - Project reference
+### Slash Commands
 
----
+| Command | What It Does |
+|---------|--------------|
+| `/dev-docs` | Creates implementation docs in `dev/active/[task-name]/` |
+| `/dev-docs-update` | Updates progress docs before ending session |
 
-## Create Global Setup (Recommended)
-
-For framework across ALL projects without copying:
-
-### Step 1: Create Global Config Location
-
-```bash
-# Windows
-mkdir -p ~/.claude-global/hooks
-mkdir -p ~/.claude-global/agents
-mkdir -p ~/.claude-global/commands
-
-# Copy files
-cp .claude/hooks/* ~/.claude-global/hooks/
-cp .claude/agents/* ~/.claude-global/agents/
-cp .claude/commands/* ~/.claude-global/commands/
-```
-
-### Step 2: Update Claude Code Settings
-
-Add to your Claude Code `settings.json`:
-
-```json
-{
-  "claude.globalHooksPath": "~/.claude-global/hooks",
-  "claude.globalAgentsPath": "~/.claude-global/agents",
-  "claude.globalCommandsPath": "~/.claude-global/commands"
-}
-```
-
-**Note:** Check Claude Code docs for exact setting names (this is conceptual)
-
----
-
-## Framework Components
-
-### 1. Auto-Activation Hooks
-
-**userPromptSubmit.ts** (runs BEFORE Claude sees your message)
-- Analyzes your prompt for keywords
-- Suggests relevant skills automatically
-- Example: "apex trigger" → suggests `apex-best-practices`
-
-**stopEvent.ts** (runs AFTER Claude responds)
-- Checks edited files for anti-patterns
-- Shows self-check reminders
-- Example: Edited `.cls` file → reminds about bulkification
-
-### 2. Slash Commands
-
-| Command | Purpose |
-|---------|---------|
-| `/dev-docs` | Create implementation tracking docs |
-| `/dev-docs-update` | Update progress before session ends |
-
-**Usage:**
-```
-User: "Create inventory management system"
-Claude: [creates plan]
-User: "/dev-docs"
-Claude: [creates dev/active/inventory-mgmt/ with tracking files]
-```
-
-### 3. Specialized Agents
+### Specialized Agents
 
 | Agent | When to Use |
 |-------|-------------|
 | `apex-code-reviewer` | Before deploying Apex code |
-| `test-class-generator` | Need comprehensive test coverage |
-| `agentforce-debugger` | Agentforce agent not responding correctly |
+| `test-class-generator` | Need test coverage |
+| `agentforce-debugger` | Agent not responding correctly |
 | `strategic-plan-architect` | Planning large features |
 
-**Usage:**
-```
-User: "Review this Apex class for governor limits"
-[Agent: apex-code-reviewer activates]
-```
+### Dev Docs Templates
 
-### 4. Dev Docs System
-
-Prevents context loss during long implementations.
-
-**Templates:**
+Located in `dev/templates/`:
 - `plan-template.md` - Implementation roadmap
 - `context-template.md` - Key decisions and state
 - `tasks-template.md` - Granular task tracking
 
-**Example Flow:**
-1. Start: "Build opportunity forecasting feature"
-2. Use: `/dev-docs` to create tracking
-3. Work: Claude updates docs as you go
-4. Resume: Next session, read `dev/active/opportunity-forecasting/` to restore context
+## Example Workflows
 
----
+### Apex Development
 
-## Skill Auto-Activation Examples
-
-### Example 1: Apex Development
-
-**Your prompt:**
+**Prompt:**
 ```
 "Create a batch class to update account records"
 ```
 
 **What happens:**
-1. `userPromptSubmit.ts` detects keywords: "batch", "class", "account"
-2. Suggests: `apex-best-practices` skill
-3. Claude uses skill guidance for bulkification patterns
-4. You edit the `.cls` file
-5. `stopEvent.ts` runs self-check:
+1. Hook detects: "batch", "class", "account"
+2. Suggests: `apex-best-practices` skill (if installed)
+3. After editing `.cls` file, shows:
    ```
    APEX SELF-CHECK
-   ? Is the code bulkified for 200+ records?
-   ? Are SOQL queries outside of loops?
-   ? Is there a test class with 85%+ coverage?
+   - Is the code bulkified for 200+ records?
+   - Are SOQL queries outside of loops?
+   - Is there a test class with 85%+ coverage?
    ```
 
-### Example 2: LWC Development
+### LWC Development
 
-**Your prompt:**
+**Prompt:**
 ```
 "Build a Lightning component to search contacts"
 ```
 
 **What happens:**
 1. Detects: "Lightning", "component"
-2. Suggests: `lwc-dev-guidelines` skill
-3. Claude follows LWC best practices
-4. After editing `.js` file in `/lwc/`:
+2. Suggests: `lwc-dev-guidelines` skill (if installed)
+3. After editing LWC files, shows:
    ```
    LWC SELF-CHECK
-   ? Is there error handling for Apex calls?
-   ? Are loading states handled?
-   ? Are console.log statements removed?
+   - Is there error handling for Apex calls?
+   - Are loading states handled?
+   - Are console.log statements removed?
    ```
 
-### Example 3: Integration Work
+### Large Feature Development
 
-**Your prompt:**
+**Prompt:**
 ```
-"Create a REST callout to external API"
-```
-
-**What happens:**
-1. Detects: "REST", "callout", "api"
-2. Suggests: `salesforce-integration-patterns` skill
-3. Guides on Named Credentials, async patterns
-4. Checks for `@future(callout=true)` patterns
-
----
-
-## Complete Workflow Example
-
-### Scenario: Build Custom Approval Process
-
-**Step 1: Initial Request**
-```
-User: "Help me build a custom approval process for opportunities over $100k with Apex and LWC"
+"Build a custom approval process for opportunities over $100k"
 ```
 
-**Step 2: Planning**
-```
-Claude: "This is a large task. Let me create implementation docs."
-[Uses /dev-docs to create dev/active/custom-approval/]
+**Workflow:**
+1. Claude creates a plan
+2. You run `/dev-docs` to create tracking docs
+3. Work through the implementation
+4. Before ending: `/dev-docs-update`
+5. Next session: Claude reads `dev/active/` and continues
 
-Created:
-- custom-approval-plan.md (what to build)
-- custom-approval-context.md (decisions made)
-- custom-approval-tasks.md (task tracking)
-```
+## Customization
 
-**Step 3: Development**
-```
-User: "Let's start with the Apex trigger"
-Claude: [Uses apex-best-practices skill]
-[Creates OpportunityTrigger.trigger]
-[stopEvent.ts shows Apex self-check]
-```
+### Add Skill Triggers
 
-**Step 4: Testing**
-```
-User: "Generate test class"
-Claude: [Uses test-class-generator agent]
-[Creates OpportunityTriggerTest.cls with 200+ record bulk tests]
-```
-
-**Step 5: LWC Component**
-```
-User: "Create the approval UI component"
-Claude: [Uses lwc-dev-guidelines skill]
-[Creates approvalManager component]
-[stopEvent.ts shows LWC self-check]
-```
-
-**Step 6: Session End**
-```
-User: "/dev-docs-update"
-Claude: [Updates context with progress, next steps]
-```
-
-**Step 7: Resume Next Day**
-```
-User: "Let's continue the approval process work"
-Claude: [Reads dev/active/custom-approval/custom-approval-context.md]
-"I see we completed the trigger and LWC. Next: Create approval Flow"
-```
-
----
-
-## Advanced: Customize for Your Org
-
-### Add Custom Keywords
-
-Edit `.claude/hooks/skill-rules.json`:
+Edit `.claude/hooks/skill-rules.json` to add your own keywords:
 
 ```json
 {
-  "apex-best-practices": {
+  "my-custom-skill": {
     "promptTriggers": {
-      "keywords": [
-        "apex", "trigger",
-        "myCustomFramework",  // Add your framework name
-        "myOrgPattern"        // Add org-specific terms
-      ]
+      "keywords": ["my-keyword", "another-keyword"]
     }
   }
 }
@@ -283,90 +123,82 @@ Edit `.claude/hooks/skill-rules.json`:
 
 ### Create Custom Agent
 
-Create `.claude/agents/my-custom-agent.md`:
+Add a markdown file to `.claude/agents/`:
 
 ```markdown
-# My Custom Agent
+# My Agent
 
 ## Purpose
-[What it does]
-
-## Activation
-[When to use it]
+What it does
 
 ## Process
-1. [Step 1]
-2. [Step 2]
-
-## Output
-[What it produces]
+1. Step one
+2. Step two
 ```
 
----
+### Customize CLAUDE.md
+
+Update `CLAUDE.md` with your org-specific:
+- Architecture patterns
+- Naming conventions
+- Custom object names
+- Integration endpoints
+
+## Skill Installation
+
+This framework *suggests* skills but doesn't include them. Install skills separately:
+
+1. **Check Claude Code's built-in skills** - Some may already exist
+2. **Create custom skills** - Add markdown files following Claude Code's skill format
+3. **Use community skills** - Search for Salesforce-specific skills
+
+### Skill Names Referenced
+
+The `skill-rules.json` references these skill names:
+- `apex-best-practices`
+- `salesforce-flow-architect`
+- `lwc-dev-guidelines`
+- `salesforce-cli`
+- `salesforce-agent-dx`
+- `salesforce-testing-api`
+- `salesforce-integration-patterns`
+- `salesforce-shield-security`
+- `agentforce-service-agent-setup`
+- `agentforce-service-agent-topics-actions`
+- `agentforce-service-agent-data-knowledge`
+- `agentforce-service-agent-testing-optimization`
+- `agentforce-service-agent-monitoring-analytics`
+
+If a skill isn't installed, the suggestion simply won't activate.
 
 ## Troubleshooting
 
 ### Hooks Not Running
 
-**Check:**
-1. Are `.ts` files in `.claude/hooks/`?
-2. Is `skill-rules.json` valid JSON?
+1. Verify files exist in `.claude/hooks/`
+2. Check `skill-rules.json` is valid JSON:
    ```bash
    python3 -c "import json; json.load(open('.claude/hooks/skill-rules.json'))"
    ```
 
-### Skills Not Activating
+### Skills Not Suggesting
 
-**Check:**
-1. Are skill names in `skill-rules.json` exact matches?
-2. Try explicit keyword: "I want to use apex-best-practices skill"
+1. Verify the skill is installed in Claude Code
+2. Try explicit activation: `"Use apex-best-practices skill to create a trigger"`
 
 ### Slash Commands Not Found
 
-**Check:**
-1. Are `.md` files in `.claude/commands/`?
-2. Try: `/help` to see available commands
+1. Verify `.md` files exist in `.claude/commands/`
+2. Restart Claude Code session
 
----
-
-## Next Steps
-
-### Immediate Actions
-
-1. **Test the framework** with a simple prompt
-2. **Create the 3 missing skills** (see CLAUDE.md)
-3. **Customize skill-rules.json** for your org-specific terms
-
-### Long-term Setup
-
-1. **Copy to active Salesforce projects**
-2. **Train team** on `/dev-docs` workflow
-3. **Extend agents** for org-specific patterns
-
----
-
-## Reference
+## File Reference
 
 | File | Purpose |
 |------|---------|
-| `.claude/hooks/skill-rules.json` | Auto-activation triggers |
+| `.claude/hooks/skill-rules.json` | Keyword → skill mappings |
 | `.claude/hooks/userPromptSubmit.ts` | Pre-prompt analyzer |
-| `.claude/hooks/stopEvent.ts` | Post-edit self-checker |
-| `.claude/commands/*.md` | Slash commands |
-| `.claude/agents/*.md` | Specialized agents |
+| `.claude/hooks/stopEvent.ts` | Post-edit reminders |
+| `.claude/commands/*.md` | Slash command definitions |
+| `.claude/agents/*.md` | Specialized agent prompts |
 | `dev/templates/*.md` | Documentation templates |
-| `CLAUDE.md` | Quick reference |
-
----
-
-## Support
-
-**Documentation:**
-- Claude Code: /help
-- Skills: Check individual SKILL.md files
-- Framework: This guide
-
-**Common Issues:**
-- Hooks not running → Check file permissions
-- Skills not suggesting → Check skill-rules.json syntax
-- Commands not found → Check .claude/commands/ location
+| `CLAUDE.md` | Project instructions for Claude |
