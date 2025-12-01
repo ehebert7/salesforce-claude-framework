@@ -6,15 +6,15 @@ A development framework that enhances Claude Code for Salesforce projects with a
 
 | Feature | Description |
 |---------|-------------|
-| **Guided Setup** | Interactive `/setup` command configures the framework for your environment |
-| **Auto-Detection** | Hooks detect Salesforce keywords and suggest relevant skills |
+| **Easy Installation** | `/install` command to inject framework into any project |
+| **Skill Integration** | Scan your skills directory and auto-configure detection triggers |
 | **Code Checks** | Automatic detection of anti-patterns in Apex, LWC, and Flows |
 | **Session Persistence** | Dev docs system maintains context across Claude sessions |
 | **Workflow Agents** | Specialized agents for planning and test generation |
 
 ## Installation
 
-### Option 1: Ask Claude to Install It (Easiest)
+### Option 1: Ask Claude (Easiest)
 
 In Claude Code, simply say:
 
@@ -22,145 +22,118 @@ In Claude Code, simply say:
 Install the Salesforce framework from https://github.com/ehebert7/salesforce-claude-framework
 ```
 
-Claude will clone the repo and copy the framework files to your current project.
+Claude will clone the repo, copy the files, and guide you through setup.
 
-### Option 2: Install to a Specific Project
+### Option 2: Clone and Use /install
 
 ```bash
-# Clone the framework
+# Clone the framework once
+git clone https://github.com/ehebert7/salesforce-claude-framework.git
+cd salesforce-claude-framework
+```
+
+Then in Claude Code, run:
+```
+/install
+```
+
+Choose where to install:
+1. **Current directory** - Install here
+2. **Specify path** - Install to any project folder
+3. **Global** - Install to `~/.claude/` for all projects
+
+### Option 3: Manual Copy
+
+```bash
 git clone https://github.com/ehebert7/salesforce-claude-framework.git
 
-# Copy to your Salesforce project
+# Copy to your project
 cp -r salesforce-claude-framework/.claude /path/to/your/project/
 cp -r salesforce-claude-framework/dev /path/to/your/project/
 cp salesforce-claude-framework/CLAUDE.md /path/to/your/project/
 ```
 
-### Option 3: Install Globally
+## Setup
 
-Install to your home directory so it's available in all projects:
-
-```bash
-# Clone the framework
-git clone https://github.com/ehebert7/salesforce-claude-framework.git
-
-# Copy to global Claude config
-cp -r salesforce-claude-framework/.claude ~/.claude/
-cp -r salesforce-claude-framework/dev ~/dev/
-```
-
-**Note:** Global installation makes the framework available everywhere, but project-specific `CLAUDE.md` files will override the global one.
-
-### Option 4: Install via Claude to Any Directory
-
-In Claude Code, you can specify where to install:
-
-```
-Install the Salesforce framework from https://github.com/ehebert7/salesforce-claude-framework to /path/to/my/project
-```
-
-Or install globally:
-
-```
-Install the Salesforce framework from https://github.com/ehebert7/salesforce-claude-framework globally to my home directory
-```
-
-## Post-Installation Setup
-
-After installing, run the setup wizard:
+After installation, run:
 
 ```
 /setup
 ```
 
 The setup wizard will:
-- Verify the framework structure
-- Optionally scan for your existing skills
-- Configure skill detection triggers
-- Customize CLAUDE.md for your project
 
-## Quick Start
+1. **Scan for skills** - Find your existing skill files
+   - Scan a custom directory
+   - Use `~/.claude/skills/` (global skills)
+   - Configure auto-detection triggers
 
-Once installed, try:
+2. **Customize CLAUDE.md** - Set project-specific patterns
+   - Project name
+   - Org type
+   - Testing requirements
 
-```
-"Create an Apex trigger for Account that validates email addresses"
-```
+## Commands
 
-The framework will:
-1. Detect Salesforce keywords
-2. Suggest relevant skills (if you have them)
-3. Check your code for anti-patterns after editing
-
-## What's Included
-
-```
-.claude/
-├── agents/
-│   ├── strategic-plan-architect.md    # Plan large features
-│   └── test-class-generator.md        # Generate test classes
-├── commands/
-│   ├── setup.md                       # Guided setup wizard
-│   ├── dev-docs.md                    # Create task documentation
-│   └── dev-docs-update.md             # Update before ending session
-└── hooks/
-    ├── skill-rules.json               # Skill trigger configuration
-    ├── userPromptSubmit.ts            # Pre-prompt skill detection
-    └── stopEvent.ts                   # Post-edit code checks
-
-dev/
-├── active/                            # Your active task docs
-└── templates/                         # Doc templates
-```
+| Command | Purpose |
+|---------|---------|
+| `/install` | Install framework to any project directory |
+| `/setup` | Configure skills and customize settings |
+| `/dev-docs` | Create task documentation for long implementations |
+| `/dev-docs-update` | Save progress before ending a session |
 
 ## Skill Integration
 
-This framework detects keywords and suggests skills, but **does not include skills**. You bring your own.
+The framework detects Salesforce keywords in your prompts and suggests relevant skills.
 
 ### How It Works
 
-1. You have skills installed (e.g., `apex-best-practices.md`)
-2. The framework's `skill-rules.json` maps keywords to skill names
-3. When you mention "apex" or "trigger", it suggests your skill
+1. You have skill files (e.g., `~/.claude/skills/apex-best-practices.md`)
+2. Run `/setup` to scan and configure triggers
+3. When you mention "apex" or "trigger", Claude suggests your skill
 
-### Configuring Skills
+### Skill Locations
 
-Run `/setup` to scan for skills, or manually edit `.claude/hooks/skill-rules.json`:
+| Location | Scope |
+|----------|-------|
+| `~/.claude/skills/` | Global - available in all projects |
+| `.claude/skills/` | Project-specific |
 
-```json
-{
-  "skills": {
-    "your-skill-name": {
-      "type": "domain",
-      "enforcement": "suggest",
-      "priority": "high",
-      "promptTriggers": {
-        "keywords": ["keyword1", "keyword2"]
-      }
-    }
-  }
-}
+### Creating Skills
+
+Skills are markdown files containing best practices and patterns:
+
+```markdown
+# Apex Best Practices
+
+## Bulkification
+- Always handle 200+ records
+- Never put SOQL/DML in loops
+
+## Security
+- Enforce CRUD/FLS with USER_MODE
+- Use bind variables in dynamic SOQL
 ```
 
 ## Code Checks
 
-The `stopEvent.ts` hook automatically checks edited files for issues:
+The framework automatically checks edited files for common issues:
 
-### Apex Checks
+### Apex
 - SOQL/DML inside loops (governor limits)
-- Dynamic SOQL without bind variables (injection risk)
+- Dynamic SOQL injection risks
 - Hardcoded Salesforce IDs and URLs
 - `without sharing` usage
 - Empty catch blocks
 - Triggers without handler pattern
 
-### LWC Checks
+### LWC
 - Console statements
-- Missing error handling on promises
+- Missing promise error handling
 - Direct DOM manipulation
 - innerHTML assignments
 
-### Flow Checks
+### Flow
 - Excessive Get Records elements
 - Multiple loops (performance)
 - Missing fault connectors
@@ -171,26 +144,17 @@ The `stopEvent.ts` hook automatically checks edited files for issues:
 Creates implementation plans for large features:
 - Gathers requirements
 - Analyzes existing codebase
-- Identifies components to create/modify
 - Creates phased implementation plan
 
 ### `test-class-generator`
 Generates Apex test classes with:
 - `@TestSetup` for shared data
-- Positive and negative tests
-- Bulk tests (200+ records)
+- Positive/negative/bulk tests
 - 85%+ coverage target
 
 ## Dev Docs System
 
 Prevents context loss during long implementations.
-
-### Commands
-
-| Command | Description |
-|---------|-------------|
-| `/dev-docs` | Create task documentation folder |
-| `/dev-docs-update` | Update progress before ending session |
 
 ### Workflow
 
@@ -209,51 +173,52 @@ dev/active/[task-name]/
 └── [task-name]-tasks.md     # Task checklist
 ```
 
-## Configuration
+## Project Structure
 
-### CLAUDE.md
+```
+.claude/
+├── agents/
+│   ├── strategic-plan-architect.md
+│   └── test-class-generator.md
+├── commands/
+│   ├── install.md           # Install to any project
+│   ├── setup.md             # Configure skills and settings
+│   ├── dev-docs.md
+│   └── dev-docs-update.md
+└── hooks/
+    ├── skill-rules.json     # Auto-detection configuration
+    ├── userPromptSubmit.ts  # Skill suggestion hook
+    └── stopEvent.ts         # Code check hook
 
-The `CLAUDE.md` file provides project-specific instructions to Claude:
-- CLI commands
-- Architecture patterns
-- Naming conventions
-- Testing requirements
+dev/
+├── active/                  # Your task docs (gitignored)
+└── templates/               # Doc templates
+```
 
-Customize it for your project during `/setup` or edit manually.
+## Configuration Files
 
 ### skill-rules.json
 
-Maps keywords to skill names. Includes example configurations for common Salesforce skills:
-- `apex-best-practices`
-- `lwc-dev-guidelines`
-- `salesforce-flow-architect`
-- `salesforce-cli`
-- `agentforce`
-- `salesforce-integration-patterns`
+Maps keywords to skills. Updated by `/setup` or edit manually:
 
-## Customization
-
-### Add Your Own Agent
-
-Create `.claude/agents/your-agent.md`:
-
-```markdown
-# Your Agent Name
-
-## Purpose
-What this agent does
-
-## Process
-1. Step one
-2. Step two
-
-## Output
-What it produces
+```json
+{
+  "skills": {
+    "apex-best-practices": {
+      "promptTriggers": {
+        "keywords": ["apex", "trigger", "soql", "dml"]
+      }
+    }
+  }
+}
 ```
 
-### Add Skill Triggers
+### CLAUDE.md
 
-Edit `.claude/hooks/skill-rules.json` to add triggers for your skills.
+Project-specific instructions for Claude:
+- Architecture patterns
+- Naming conventions
+- Testing requirements
 
 ## Contributing
 
