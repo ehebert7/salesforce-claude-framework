@@ -4,11 +4,13 @@
 # Local settings (may contain sensitive info)
 .claude/settings.local.json
 
+# Active dev docs (user-specific work in progress)
+# Keep the directory but ignore contents except .gitkeep
+dev/active/*
+!dev/active/.gitkeep
+
 # Session files
 .mm/
-
-# Phi-scanner (separate repo)
-phi-scanner/
 
 # Windows system files
 nul
