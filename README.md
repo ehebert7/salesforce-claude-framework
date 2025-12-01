@@ -1,18 +1,19 @@
 # Salesforce Claude Code Framework
 
-A development framework that enhances Claude Code for Salesforce development with auto-activating skill suggestions, specialized agents, and session persistence.
+A development framework that enhances Claude Code for Salesforce development with specialized agents, auto-detection hooks, and session persistence.
 
 ## What's Included
 
-| Component | Description | Included? |
-|-----------|-------------|-----------|
-| **Skill Rules** | Auto-suggests skills based on prompts/files | Yes |
-| **Agents** | Specialized AI agents for Apex review, testing, etc. | Yes |
-| **Slash Commands** | `/dev-docs`, `/dev-docs-update` | Yes |
-| **Templates** | Dev doc templates for task tracking | Yes |
-| **Skills** | The actual skill content (apex-best-practices, etc.) | **No** - Install separately |
+| Component | Description |
+|-----------|-------------|
+| **Agents** | Specialized AI agents for Apex review, test generation, Agentforce debugging |
+| **Slash Commands** | `/dev-docs` and `/dev-docs-update` for task tracking |
+| **Templates** | Dev doc templates for maintaining context across sessions |
+| **Auto-Detection Hooks** | Detects Salesforce keywords and file patterns in your prompts |
 
-> **Important:** This framework includes *rules that suggest skills*, but not the skills themselves. You'll need to install skills separately via Claude Code's skill system or create your own.
+### Optional: Skill Integration
+
+The framework includes hooks that detect Salesforce-related keywords (apex, trigger, lwc, flow, etc.) and can automatically suggest relevant skills if you have them installed. Skills are optional—the framework works without them.
 
 ## Installation
 
@@ -65,26 +66,16 @@ cp /path/to/salesforce-claude-framework/CLAUDE.md .
 
 ## Features
 
-### 1. Skill Auto-Suggestion
+### 1. Auto-Detection Hooks
 
-The framework detects keywords in your prompts and suggests relevant skills.
+The framework detects Salesforce keywords in your prompts and shows contextual reminders.
 
 **Example:** When you type `"Create an Apex trigger for Account"`:
 1. Hook detects keywords: "apex", "trigger"
-2. Suggests: `apex-best-practices` skill (if installed)
+2. Suggests relevant skills (if installed)
 3. Shows self-check reminders after editing `.cls` files
 
-**Configured skill triggers** (in `skill-rules.json`):
-
-| Skill Name | Triggered By |
-|------------|--------------|
-| `apex-best-practices` | apex, trigger, batch, soql, governor limits |
-| `salesforce-flow-architect` | flow, screen flow, autolaunched |
-| `lwc-dev-guidelines` | lwc, lightning web component, wire |
-| `salesforce-cli` | sf, sfdx, deploy, retrieve, scratch org |
-| `agentforce-*` | agentforce, service agent, topic, action |
-| `salesforce-integration-patterns` | callout, rest, api, named credential |
-| `salesforce-shield-security` | shield, encryption, hipaa, compliance |
+**Keywords detected:** apex, trigger, batch, soql, flow, lwc, lightning component, agentforce, callout, deploy, and more. See `skill-rules.json` for the full list.
 
 ### 2. Specialized Agents
 
@@ -113,19 +104,6 @@ Prevents context loss during long implementations:
 3. **Work** - Claude updates docs as you progress
 4. **End session** - Run `/dev-docs-update`
 5. **Resume** - Next session reads `dev/active/` and continues
-
-## Installing Skills
-
-This framework suggests skills but doesn't include them. Install skills separately:
-
-### Option 1: Use Built-in Anthropic Skills
-Some skills like `apex-best-practices` may be available in Claude Code's skill marketplace.
-
-### Option 2: Create Custom Skills
-Create your own skills as markdown files. See [Claude Code documentation](https://docs.anthropic.com/en/docs/claude-code) for details.
-
-### Option 3: Community Skills
-Search for community-created Salesforce skills that match the names in `skill-rules.json`.
 
 ## Customization
 
