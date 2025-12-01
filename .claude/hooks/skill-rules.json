@@ -1,5 +1,29 @@
 {
+  "_readme": "This file configures auto-detection triggers for your installed skills. Run /setup to configure automatically, or edit manually.",
+  "_format": {
+    "type": "domain | workflow | utility",
+    "enforcement": "suggest | require",
+    "priority": "high | medium | low",
+    "promptTriggers.keywords": "Words that trigger this skill",
+    "promptTriggers.intentPatterns": "Regex patterns for intent matching",
+    "fileTriggers.pathPatterns": "Glob patterns for file paths",
+    "fileTriggers.contentPatterns": "Regex patterns for file content"
+  },
   "skills": {
+    "_example-skill": {
+      "_comment": "This is an example. Replace with your actual skills.",
+      "type": "domain",
+      "enforcement": "suggest",
+      "priority": "medium",
+      "promptTriggers": {
+        "keywords": ["example", "keyword"],
+        "intentPatterns": ["(create|build).*example"]
+      },
+      "fileTriggers": {
+        "pathPatterns": ["**/*.example"],
+        "contentPatterns": ["ExampleClass"]
+      }
+    },
     "apex-best-practices": {
       "type": "domain",
       "enforcement": "suggest",
@@ -8,31 +32,47 @@
         "keywords": [
           "apex", "trigger", "class", "test class", "batch", "queueable",
           "schedulable", "future", "soql", "sosl", "dml", "governor limits",
-          "bulkification", "selector", "domain", "service layer", "security"
+          "bulkification", "selector", "domain", "service layer"
         ],
         "intentPatterns": [
           "(create|add|build|write).*?(trigger|class|batch|test)",
-          "(how to|best practice).*?(apex|soql|trigger)",
           "(fix|debug|optimize).*?(apex|query|trigger)",
-          "(bulkify|refactor).*?(code|trigger|class)",
-          "(review|check).*?(apex|code)"
+          "(bulkify|refactor).*?(code|trigger|class)"
         ]
       },
       "fileTriggers": {
         "pathPatterns": [
           "force-app/**/classes/**/*.cls",
-          "force-app/**/triggers/**/*.trigger",
-          "**/classes/*.cls",
-          "**/triggers/*.trigger"
+          "force-app/**/triggers/**/*.trigger"
         ],
         "contentPatterns": [
           "public class",
-          "private class",
-          "global class",
-          "trigger.*on.*\\(",
-          "@isTest",
-          "@AuraEnabled",
-          "@InvocableMethod"
+          "trigger.*on.*\\("
+        ]
+      }
+    },
+    "lwc-dev-guidelines": {
+      "type": "domain",
+      "enforcement": "suggest",
+      "priority": "high",
+      "promptTriggers": {
+        "keywords": [
+          "lwc", "lightning web component", "component", "wire",
+          "lightning-", "slds", "@api", "@track", "connectedCallback"
+        ],
+        "intentPatterns": [
+          "(create|add|build).*?(component|lwc|lightning)",
+          "(how to|best practice).*?(lwc|wire|component)"
+        ]
+      },
+      "fileTriggers": {
+        "pathPatterns": [
+          "force-app/**/lwc/**/*.js",
+          "force-app/**/lwc/**/*.html"
+        ],
+        "contentPatterns": [
+          "import.*from 'lwc'",
+          "LightningElement"
         ]
       }
     },
@@ -43,158 +83,20 @@
       "promptTriggers": {
         "keywords": [
           "flow", "screen flow", "record-triggered", "autolaunched",
-          "subflow", "flow variable", "flow loop", "collection",
-          "decision element", "assignment", "get records", "create records"
+          "subflow", "flow variable", "decision element", "get records"
         ],
         "intentPatterns": [
           "(create|build|design).*?(flow|automation)",
-          "(how to|best practice).*?(flow|screen flow)",
-          "(debug|fix|troubleshoot).*?flow",
-          "(convert|migrate).*?(workflow|process builder).*?flow"
+          "(debug|fix|troubleshoot).*?flow"
         ]
       },
       "fileTriggers": {
         "pathPatterns": [
-          "force-app/**/flows/**/*.flow-meta.xml",
-          "**/flows/*.flow-meta.xml"
+          "force-app/**/flows/**/*.flow-meta.xml"
         ],
         "contentPatterns": [
-          "<Flow xmlns",
-          "<recordTriggerType>",
-          "<screenFields>"
+          "<Flow xmlns"
         ]
-      }
-    },
-    "agentforce-service-agent-setup": {
-      "type": "domain",
-      "enforcement": "suggest",
-      "priority": "high",
-      "promptTriggers": {
-        "keywords": [
-          "agentforce", "service agent", "agent setup", "configure agent",
-          "copilot", "einstein", "bot", "messaging", "channel"
-        ],
-        "intentPatterns": [
-          "(create|build|configure|setup).*?(agent|service agent)",
-          "(deploy|activate).*?agent",
-          "(how to|best practice).*?(agentforce|service agent)"
-        ]
-      },
-      "fileTriggers": {
-        "pathPatterns": [
-          "force-app/**/bots/**",
-          "**/bots/*.bot-meta.xml"
-        ],
-        "contentPatterns": [
-          "<Bot xmlns",
-          "<BotVersion"
-        ]
-      }
-    },
-    "agentforce-service-agent-topics-actions": {
-      "type": "domain",
-      "enforcement": "suggest",
-      "priority": "high",
-      "promptTriggers": {
-        "keywords": [
-          "topic", "action", "agent action", "custom action", "flow action",
-          "apex action", "instruction", "agent behavior"
-        ],
-        "intentPatterns": [
-          "(create|add|design).*?(topic|action)",
-          "(configure|modify).*?(topic|action)",
-          "(how to|best practice).*?(topic|action)"
-        ]
-      },
-      "fileTriggers": {
-        "pathPatterns": [
-          "force-app/**/genAiPlugins/**",
-          "force-app/**/genAiFunctions/**"
-        ],
-        "contentPatterns": [
-          "<GenAiPlugin",
-          "<GenAiFunction"
-        ]
-      }
-    },
-    "agentforce-service-agent-data-knowledge": {
-      "type": "domain",
-      "enforcement": "suggest",
-      "priority": "high",
-      "promptTriggers": {
-        "keywords": [
-          "knowledge", "data library", "grounding", "RAG", "retrieval",
-          "knowledge article", "article", "data cloud", "semantic search"
-        ],
-        "intentPatterns": [
-          "(configure|setup).*?(knowledge|grounding|data)",
-          "(improve|optimize).*?(retrieval|grounding)",
-          "(how to|best practice).*?(knowledge|RAG)"
-        ]
-      },
-      "fileTriggers": {
-        "pathPatterns": [],
-        "contentPatterns": []
-      }
-    },
-    "agentforce-service-agent-testing-optimization": {
-      "type": "domain",
-      "enforcement": "suggest",
-      "priority": "high",
-      "promptTriggers": {
-        "keywords": [
-          "test agent", "agent testing", "optimize agent", "agent performance",
-          "prompt optimization", "response quality", "utterance", "conversation test"
-        ],
-        "intentPatterns": [
-          "(test|debug|troubleshoot).*?agent",
-          "(optimize|improve).*?(agent|response|prompt)",
-          "(why|not working).*?agent"
-        ]
-      },
-      "fileTriggers": {
-        "pathPatterns": [],
-        "contentPatterns": []
-      }
-    },
-    "agentforce-service-agent-monitoring-analytics": {
-      "type": "domain",
-      "enforcement": "suggest",
-      "priority": "medium",
-      "promptTriggers": {
-        "keywords": [
-          "monitor", "analytics", "metrics", "performance", "dashboard",
-          "conversation logs", "agent metrics", "escalation rate"
-        ],
-        "intentPatterns": [
-          "(monitor|track|analyze).*?agent",
-          "(report|dashboard).*?agent",
-          "(how to|best practice).*?(monitor|analytics)"
-        ]
-      },
-      "fileTriggers": {
-        "pathPatterns": [],
-        "contentPatterns": []
-      }
-    },
-    "salesforce-testing-api": {
-      "type": "domain",
-      "enforcement": "suggest",
-      "priority": "high",
-      "promptTriggers": {
-        "keywords": [
-          "test api", "automated test", "agent test", "test framework",
-          "test harness", "conversation test", "utterance test"
-        ],
-        "intentPatterns": [
-          "(create|build|write).*?(test|automated test)",
-          "(how to|best practice).*?(test.*agent)",
-          "(automate).*?test"
-        ]
-      },
-      "fileTriggers": {
-        "pathPatterns": [],
-        "contentPatterns": []
       }
     },
     "salesforce-cli": {
@@ -204,12 +106,11 @@
       "promptTriggers": {
         "keywords": [
           "sf", "sfdx", "cli", "deploy", "retrieve", "push", "pull",
-          "scratch org", "sandbox", "package", "metadata", "manifest"
+          "scratch org", "sandbox", "package", "metadata"
         ],
         "intentPatterns": [
           "(deploy|push|pull|retrieve).*?(org|sandbox|metadata)",
-          "(create|generate).*?(package|manifest|scratch)",
-          "(how to|command for).*?(sf|sfdx|deploy)"
+          "(create|generate).*?(package|scratch)"
         ]
       },
       "fileTriggers": {
@@ -217,86 +118,33 @@
           "**/sfdx-project.json",
           "**/package.xml"
         ],
-        "contentPatterns": [
-          "sfdx-project"
-        ]
+        "contentPatterns": []
       }
     },
-    "salesforce-agent-dx": {
+    "agentforce": {
       "type": "domain",
       "enforcement": "suggest",
-      "priority": "medium",
+      "priority": "high",
       "promptTriggers": {
         "keywords": [
-          "agent dx", "agentforce dx", "agent cli", "agent metadata",
-          "deploy agent", "retrieve agent"
+          "agentforce", "service agent", "agent", "topic", "action",
+          "copilot", "einstein", "bot", "grounding", "knowledge"
         ],
         "intentPatterns": [
-          "(deploy|retrieve|push).*?agent",
-          "(dx|cli).*?agent"
+          "(create|build|configure|setup).*?agent",
+          "(debug|troubleshoot|fix).*?agent",
+          "(test|optimize).*?agent"
         ]
       },
       "fileTriggers": {
         "pathPatterns": [
           "force-app/**/bots/**",
-          "force-app/**/genAi*/**"
-        ],
-        "contentPatterns": []
-      }
-    },
-    "lwc-dev-guidelines": {
-      "type": "domain",
-      "enforcement": "suggest",
-      "priority": "high",
-      "promptTriggers": {
-        "keywords": [
-          "lwc", "lightning web component", "component", "wire", "apex wire",
-          "lightning-", "slds", "css", "jest", "lwc test", "event",
-          "pubsub", "message channel", "lightning message service",
-          "@api", "@track", "connectedCallback"
-        ],
-        "intentPatterns": [
-          "(create|add|build).*?(component|lwc|lightning)",
-          "(how to|best practice).*?(lwc|wire|component)",
-          "(style|css).*?(component|lightning)",
-          "(test|jest).*?(lwc|component)"
-        ]
-      },
-      "fileTriggers": {
-        "pathPatterns": [
-          "force-app/**/lwc/**/*.js",
-          "force-app/**/lwc/**/*.html",
-          "force-app/**/lwc/**/*.css"
+          "force-app/**/genAiPlugins/**"
         ],
         "contentPatterns": [
-          "import.*from 'lwc'",
-          "import.*from '@salesforce/apex'",
-          "@wire",
-          "@api",
-          "LightningElement"
+          "<Bot xmlns",
+          "<GenAiPlugin"
         ]
-      }
-    },
-    "salesforce-shield-security": {
-      "type": "domain",
-      "enforcement": "suggest",
-      "priority": "high",
-      "promptTriggers": {
-        "keywords": [
-          "shield", "encryption", "platform encryption", "hipaa", "compliance",
-          "field audit trail", "event monitoring", "encrypted field",
-          "tenant secret", "key management", "deterministic", "probabilistic"
-        ],
-        "intentPatterns": [
-          "(encrypt|secure|protect).*?(field|data)",
-          "(hipaa|compliance).*?(requirement|pattern)",
-          "(configure|setup).*?(shield|encryption)",
-          "(audit|monitor).*?(field|event)"
-        ]
-      },
-      "fileTriggers": {
-        "pathPatterns": [],
-        "contentPatterns": []
       }
     },
     "salesforce-integration-patterns": {
@@ -306,29 +154,21 @@
       "promptTriggers": {
         "keywords": [
           "callout", "http", "rest", "soap", "api", "integration",
-          "named credential", "external service", "platform event",
-          "change data capture", "cdc", "webhook", "outbound message"
+          "named credential", "external service", "platform event"
         ],
         "intentPatterns": [
           "(create|build|make).*?(callout|integration|api)",
-          "(how to|best practice).*?(callout|rest|integration)",
-          "(connect|integrate).*?(external|api|system)",
-          "(publish|subscribe).*?(event|platform event)"
+          "(connect|integrate).*?(external|api|system)"
         ]
       },
       "fileTriggers": {
         "pathPatterns": [
           "force-app/**/namedCredentials/**",
-          "force-app/**/externalServices/**",
-          "force-app/**/platformEventChannels/**"
+          "force-app/**/externalServices/**"
         ],
         "contentPatterns": [
           "HttpRequest",
-          "HttpResponse",
-          "Http\\(\\)",
-          "@future\\(callout=true\\)",
-          "Database.AllowsCallouts",
-          "EventBus.publish"
+          "HttpResponse"
         ]
       }
     }

@@ -9,196 +9,150 @@
    cp CLAUDE.md /path/to/your/project/
    ```
 
-2. **Start using it:**
+2. **Run setup:**
    ```
-   "Create an Apex trigger for Account that validates email addresses"
-   ```
-
-That's it! The framework will automatically suggest relevant skills based on your prompts.
-
-## What You Get
-
-### Skill Auto-Suggestion Hooks
-
-The hooks in `.claude/hooks/` analyze your prompts and suggest skills:
-
-**userPromptSubmit.ts** - Runs before Claude sees your message:
-- Scans for keywords like "apex", "trigger", "lwc", "flow"
-- Suggests relevant skills if installed
-
-**stopEvent.ts** - Runs after Claude edits files:
-- Shows self-check reminders for common patterns
-- Example: After editing `.cls` → reminds about bulkification
-
-### Slash Commands
-
-| Command | What It Does |
-|---------|--------------|
-| `/dev-docs` | Creates implementation docs in `dev/active/[task-name]/` |
-| `/dev-docs-update` | Updates progress docs before ending session |
-
-### Specialized Agents
-
-| Agent | When to Use |
-|-------|-------------|
-| `apex-code-reviewer` | Before deploying Apex code |
-| `test-class-generator` | Need test coverage |
-| `agentforce-debugger` | Agent not responding correctly |
-| `strategic-plan-architect` | Planning large features |
-
-### Dev Docs Templates
-
-Located in `dev/templates/`:
-- `plan-template.md` - Implementation roadmap
-- `context-template.md` - Key decisions and state
-- `tasks-template.md` - Granular task tracking
-
-## Example Workflows
-
-### Apex Development
-
-**Prompt:**
-```
-"Create a batch class to update account records"
-```
-
-**What happens:**
-1. Hook detects: "batch", "class", "account"
-2. Suggests: `apex-best-practices` skill (if installed)
-3. After editing `.cls` file, shows:
-   ```
-   APEX SELF-CHECK
-   - Is the code bulkified for 200+ records?
-   - Are SOQL queries outside of loops?
-   - Is there a test class with 85%+ coverage?
+   /setup
    ```
 
-### LWC Development
+3. **Start developing** - the framework is now active.
 
-**Prompt:**
-```
-"Build a Lightning component to search contacts"
-```
+## The Setup Wizard
 
-**What happens:**
-1. Detects: "Lightning", "component"
-2. Suggests: `lwc-dev-guidelines` skill (if installed)
-3. After editing LWC files, shows:
-   ```
-   LWC SELF-CHECK
-   - Is there error handling for Apex calls?
-   - Are loading states handled?
-   - Are console.log statements removed?
-   ```
+Running `/setup` walks you through:
 
-### Large Feature Development
+### 1. Structure Verification
+Ensures all framework directories exist:
+- `.claude/hooks/`
+- `.claude/agents/`
+- `.claude/commands/`
+- `dev/templates/`
+- `dev/active/`
 
-**Prompt:**
-```
-"Build a custom approval process for opportunities over $100k"
-```
+### 2. Skill Detection (Optional)
+If you have Claude Code skills installed, setup can:
+- Scan your skills directory
+- Identify available skills
+- Configure triggers in `skill-rules.json`
 
-**Workflow:**
-1. Claude creates a plan
-2. You run `/dev-docs` to create tracking docs
-3. Work through the implementation
-4. Before ending: `/dev-docs-update`
-5. Next session: Claude reads `dev/active/` and continues
+### 3. Project Customization
+Optionally customize `CLAUDE.md` with:
+- Project name
+- Org type
+- Naming conventions
+- Testing requirements
 
-## Customization
+## Manual Configuration
 
-### Add Skill Triggers
+### Skill Triggers
 
-Edit `.claude/hooks/skill-rules.json` to add your own keywords:
+Edit `.claude/hooks/skill-rules.json` to map keywords to your skills:
 
 ```json
 {
-  "my-custom-skill": {
-    "promptTriggers": {
-      "keywords": ["my-keyword", "another-keyword"]
+  "skills": {
+    "my-skill-name": {
+      "type": "domain",
+      "enforcement": "suggest",
+      "priority": "high",
+      "promptTriggers": {
+        "keywords": ["keyword1", "keyword2"],
+        "intentPatterns": ["(create|build).*keyword"]
+      },
+      "fileTriggers": {
+        "pathPatterns": ["**/*.cls"],
+        "contentPatterns": ["ClassName"]
+      }
     }
   }
 }
 ```
 
-### Create Custom Agent
+### Trigger Types
 
-Add a markdown file to `.claude/agents/`:
+| Field | Purpose |
+|-------|---------|
+| `promptTriggers.keywords` | Words in user prompt that trigger skill |
+| `promptTriggers.intentPatterns` | Regex patterns for intent matching |
+| `fileTriggers.pathPatterns` | Glob patterns for file paths |
+| `fileTriggers.contentPatterns` | Regex patterns for file content |
 
-```markdown
-# My Agent
+## Available Commands
 
-## Purpose
-What it does
+| Command | Description |
+|---------|-------------|
+| `/setup` | Run the setup wizard |
+| `/dev-docs` | Create task documentation |
+| `/dev-docs-update` | Update progress before ending session |
 
-## Process
-1. Step one
-2. Step two
+## Available Agents
+
+| Agent | Use Case |
+|-------|----------|
+| `strategic-plan-architect` | Plan large feature implementations |
+| `test-class-generator` | Generate comprehensive test classes |
+
+## Code Checks
+
+The framework automatically checks edited files for issues:
+
+### Apex
+- SOQL/DML in loops
+- Dynamic SOQL injection risks
+- Hardcoded IDs and URLs
+- `without sharing` usage
+- Empty catch blocks
+- Missing trigger handler pattern
+
+### LWC
+- Console statements
+- Missing promise error handling
+- Direct DOM manipulation
+- innerHTML usage
+
+### Flow
+- Too many Get Records elements
+- Multiple loops
+- Missing fault connectors
+
+## Dev Docs Workflow
+
+### Creating Docs
+```
+/dev-docs
 ```
 
-### Customize CLAUDE.md
+Creates:
+```
+dev/active/[task-name]/
+├── [task-name]-plan.md
+├── [task-name]-context.md
+└── [task-name]-tasks.md
+```
 
-Update `CLAUDE.md` with your org-specific:
-- Architecture patterns
-- Naming conventions
-- Custom object names
-- Integration endpoints
+### Updating Before Session End
+```
+/dev-docs-update
+```
 
-## Skill Installation
+Updates:
+- Current state
+- Next steps
+- Task completion status
 
-This framework *suggests* skills but doesn't include them. Install skills separately:
-
-1. **Check Claude Code's built-in skills** - Some may already exist
-2. **Create custom skills** - Add markdown files following Claude Code's skill format
-3. **Use community skills** - Search for Salesforce-specific skills
-
-### Skill Names Referenced
-
-The `skill-rules.json` references these skill names:
-- `apex-best-practices`
-- `salesforce-flow-architect`
-- `lwc-dev-guidelines`
-- `salesforce-cli`
-- `salesforce-agent-dx`
-- `salesforce-testing-api`
-- `salesforce-integration-patterns`
-- `salesforce-shield-security`
-- `agentforce-service-agent-setup`
-- `agentforce-service-agent-topics-actions`
-- `agentforce-service-agent-data-knowledge`
-- `agentforce-service-agent-testing-optimization`
-- `agentforce-service-agent-monitoring-analytics`
-
-If a skill isn't installed, the suggestion simply won't activate.
+### Resuming Work
+Claude automatically reads `dev/active/` to restore context.
 
 ## Troubleshooting
 
 ### Hooks Not Running
-
 1. Verify files exist in `.claude/hooks/`
-2. Check `skill-rules.json` is valid JSON:
-   ```bash
-   python3 -c "import json; json.load(open('.claude/hooks/skill-rules.json'))"
-   ```
+2. Check JSON syntax: `python -c "import json; json.load(open('.claude/hooks/skill-rules.json'))"`
 
 ### Skills Not Suggesting
+1. Verify skill name matches in `skill-rules.json`
+2. Check keywords match your prompt
+3. Try explicit: `"Use [skill-name] to..."`
 
-1. Verify the skill is installed in Claude Code
-2. Try explicit activation: `"Use apex-best-practices skill to create a trigger"`
-
-### Slash Commands Not Found
-
+### Commands Not Found
 1. Verify `.md` files exist in `.claude/commands/`
 2. Restart Claude Code session
-
-## File Reference
-
-| File | Purpose |
-|------|---------|
-| `.claude/hooks/skill-rules.json` | Keyword → skill mappings |
-| `.claude/hooks/userPromptSubmit.ts` | Pre-prompt analyzer |
-| `.claude/hooks/stopEvent.ts` | Post-edit reminders |
-| `.claude/commands/*.md` | Slash command definitions |
-| `.claude/agents/*.md` | Specialized agent prompts |
-| `dev/templates/*.md` | Documentation templates |
-| `CLAUDE.md` | Project instructions for Claude |

@@ -1,173 +1,193 @@
 # Salesforce Claude Code Framework
 
-A development framework that enhances Claude Code for Salesforce development with specialized agents, auto-detection hooks, and session persistence.
-
-## What's Included
-
-| Component | Description |
-|-----------|-------------|
-| **Agents** | Specialized AI agents for Apex review, test generation, Agentforce debugging |
-| **Slash Commands** | `/dev-docs` and `/dev-docs-update` for task tracking |
-| **Templates** | Dev doc templates for maintaining context across sessions |
-| **Auto-Detection Hooks** | Detects Salesforce keywords and file patterns in your prompts |
-
-### Optional: Skill Integration
-
-The framework includes hooks that detect Salesforce-related keywords (apex, trigger, lwc, flow, etc.) and can automatically suggest relevant skills if you have them installed. Skills are optional—the framework works without them.
-
-## Installation
-
-Clone or copy this repo to your Salesforce project:
-
-```bash
-git clone https://github.com/YOUR_USERNAME/salesforce-claude-framework.git
-cd salesforce-claude-framework
-
-# Copy to your project
-cp -r .claude /path/to/your/salesforce-project/
-cp -r dev /path/to/your/salesforce-project/
-cp CLAUDE.md /path/to/your/salesforce-project/
-```
-
-Or copy directly into an existing project:
-
-```bash
-cd /path/to/your/salesforce-project
-cp -r /path/to/salesforce-claude-framework/.claude .
-cp -r /path/to/salesforce-claude-framework/dev .
-cp /path/to/salesforce-claude-framework/CLAUDE.md .
-```
-
-## Project Structure
-
-```
-.
-├── .claude/
-│   ├── agents/                    # Specialized AI agents
-│   │   ├── agentforce-debugger.md
-│   │   ├── apex-code-reviewer.md
-│   │   ├── strategic-plan-architect.md
-│   │   └── test-class-generator.md
-│   ├── commands/                  # Slash commands
-│   │   ├── dev-docs.md
-│   │   ├── dev-docs-update.md
-│   │   ├── framework.md
-│   │   └── framework-update.md
-│   └── hooks/                     # Auto-suggestion hooks
-│       ├── skill-rules.json       # Keyword → skill mappings
-│       ├── stopEvent.ts           # Post-edit reminders
-│       └── userPromptSubmit.ts    # Pre-prompt analyzer
-├── dev/
-│   ├── active/                    # Active task documentation
-│   └── templates/                 # Doc templates
-├── CLAUDE.md                      # Project instructions for Claude
-└── SETUP_GUIDE.md                 # Detailed setup guide
-```
+A development framework that enhances Claude Code for Salesforce projects with auto-detection hooks, guided setup, and session persistence.
 
 ## Features
 
-### 1. Auto-Detection Hooks
+| Feature | Description |
+|---------|-------------|
+| **Guided Setup** | Interactive `/setup` command configures the framework for your environment |
+| **Auto-Detection** | Hooks detect Salesforce keywords and suggest relevant skills |
+| **Code Checks** | Automatic detection of anti-patterns in Apex, LWC, and Flows |
+| **Session Persistence** | Dev docs system maintains context across Claude sessions |
+| **Workflow Agents** | Specialized agents for planning and test generation |
 
-The framework detects Salesforce keywords in your prompts and shows contextual reminders.
+## Quick Start
 
-**Example:** When you type `"Create an Apex trigger for Account"`:
-1. Hook detects keywords: "apex", "trigger"
-2. Suggests relevant skills (if installed)
-3. Shows self-check reminders after editing `.cls` files
+### 1. Copy to Your Project
 
-**Keywords detected:** apex, trigger, batch, soql, flow, lwc, lightning component, agentforce, callout, deploy, and more. See `skill-rules.json` for the full list.
+```bash
+git clone https://github.com/ehebert7/salesforce-claude-framework.git
+cd salesforce-claude-framework
 
-### 2. Specialized Agents
-
-Pre-built agents for common Salesforce tasks:
-
-#### `apex-code-reviewer`
-Deep code review for Apex classes, triggers, and tests. Checks for:
-- Bulkification (handles 200+ records)
-- Governor limits (SOQL/DML outside loops)
-- Security (CRUD/FLS checks, no SOQL injection)
-- Error handling and logging
-- Test coverage (85%+ with meaningful assertions)
-- Architecture patterns (trigger handler, service layer, selector)
-
-#### `test-class-generator`
-Generates comprehensive Apex test classes with:
-- `@TestSetup` method with test data
-- Positive and negative scenario tests
-- Bulk tests (200+ records)
-- Trigger recursion prevention tests
-- `System.assert` in every test method
-- 85%+ coverage target
-
-#### `agentforce-debugger`
-Troubleshoots Agentforce Service Agent issues by checking:
-- Topic matching and classification
-- Action configuration
-- Knowledge grounding / RAG retrieval
-- Prompt template effectiveness
-- Channel-specific formatting
-- Conversation context handling
-
-#### `strategic-plan-architect`
-Creates implementation plans for large features:
-- Gathers requirements and analyzes existing codebase
-- Identifies affected objects, fields, and components
-- Creates phased implementation plan with risks/mitigations
-- Generates dev docs files for tracking
-
-### 3. Dev Docs System
-
-Prevents context loss during long implementations by creating persistent documentation.
-
-#### `/dev-docs` command
-Creates a documentation folder for your current task:
-```
-dev/active/[task-name]/
-├── [task-name]-plan.md      # Implementation roadmap
-├── [task-name]-context.md   # Current state, decisions, next steps
-└── [task-name]-tasks.md     # Granular task checklist
+# Copy to your Salesforce project
+cp -r .claude /path/to/your/project/
+cp -r dev /path/to/your/project/
+cp CLAUDE.md /path/to/your/project/
 ```
 
-#### `/dev-docs-update` command
-Updates documentation before ending a session:
-- Sets "Last Updated" timestamp
-- Updates "Current State" with progress
-- Updates "Next Steps" for the next session
-- Records important decisions made
-- Moves completed tasks to "Completed" section
+### 2. Run Setup
 
-#### Workflow
-1. **Start task** - `"Build opportunity forecasting feature"`
-2. **Create docs** - Run `/dev-docs`
-3. **Work** - Claude updates docs as you progress
-4. **End session** - Run `/dev-docs-update`
-5. **Resume** - Next session reads `dev/active/` and continues where you left off
+In Claude Code, run:
+```
+/setup
+```
 
-## Customization
+The setup wizard will:
+- Verify the framework structure
+- Optionally scan for your existing skills
+- Configure skill detection triggers
+- Customize CLAUDE.md for your project
 
-### Add Custom Skill Triggers
+### 3. Start Developing
 
-Edit `.claude/hooks/skill-rules.json`:
+The framework is now active. Try:
+```
+"Create an Apex trigger for Account that validates email addresses"
+```
+
+## What's Included
+
+```
+.claude/
+├── agents/
+│   ├── strategic-plan-architect.md    # Plan large features
+│   └── test-class-generator.md        # Generate test classes
+├── commands/
+│   ├── setup.md                       # Guided setup wizard
+│   ├── dev-docs.md                    # Create task documentation
+│   └── dev-docs-update.md             # Update before ending session
+└── hooks/
+    ├── skill-rules.json               # Skill trigger configuration
+    ├── userPromptSubmit.ts            # Pre-prompt skill detection
+    └── stopEvent.ts                   # Post-edit code checks
+
+dev/
+├── active/                            # Your active task docs
+└── templates/                         # Doc templates
+```
+
+## Skill Integration
+
+This framework detects keywords and suggests skills, but **does not include skills**. You bring your own.
+
+### How It Works
+
+1. You have skills installed (e.g., `apex-best-practices.md`)
+2. The framework's `skill-rules.json` maps keywords to skill names
+3. When you mention "apex" or "trigger", it suggests your skill
+
+### Configuring Skills
+
+Run `/setup` to scan for skills, or manually edit `.claude/hooks/skill-rules.json`:
 
 ```json
 {
-  "your-custom-skill": {
-    "type": "domain",
-    "enforcement": "suggest",
-    "priority": "high",
-    "promptTriggers": {
-      "keywords": ["your", "keywords", "here"],
-      "intentPatterns": ["(create|build).*?(your pattern)"]
-    },
-    "fileTriggers": {
-      "pathPatterns": ["**/*.your-extension"],
-      "contentPatterns": ["YourClassName"]
+  "skills": {
+    "your-skill-name": {
+      "type": "domain",
+      "enforcement": "suggest",
+      "priority": "high",
+      "promptTriggers": {
+        "keywords": ["keyword1", "keyword2"]
+      }
     }
   }
 }
 ```
 
-### Create Custom Agent
+## Code Checks
+
+The `stopEvent.ts` hook automatically checks edited files for issues:
+
+### Apex Checks
+- SOQL/DML inside loops (governor limits)
+- Dynamic SOQL without bind variables (injection risk)
+- Hardcoded Salesforce IDs and URLs
+- `without sharing` usage
+- Empty catch blocks
+- Triggers without handler pattern
+
+### LWC Checks
+- Console statements
+- Missing error handling on promises
+- Direct DOM manipulation
+- innerHTML assignments
+
+### Flow Checks
+- Excessive Get Records elements
+- Multiple loops (performance)
+- Missing fault connectors
+
+## Agents
+
+### `strategic-plan-architect`
+Creates implementation plans for large features:
+- Gathers requirements
+- Analyzes existing codebase
+- Identifies components to create/modify
+- Creates phased implementation plan
+
+### `test-class-generator`
+Generates Apex test classes with:
+- `@TestSetup` for shared data
+- Positive and negative tests
+- Bulk tests (200+ records)
+- 85%+ coverage target
+
+## Dev Docs System
+
+Prevents context loss during long implementations.
+
+### Commands
+
+| Command | Description |
+|---------|-------------|
+| `/dev-docs` | Create task documentation folder |
+| `/dev-docs-update` | Update progress before ending session |
+
+### Workflow
+
+1. Start a task: `"Build opportunity forecasting feature"`
+2. Create docs: `/dev-docs`
+3. Work on implementation
+4. Before ending: `/dev-docs-update`
+5. Resume later: Claude reads `dev/active/` and continues
+
+### Generated Files
+
+```
+dev/active/[task-name]/
+├── [task-name]-plan.md      # Implementation roadmap
+├── [task-name]-context.md   # Current state and decisions
+└── [task-name]-tasks.md     # Task checklist
+```
+
+## Configuration
+
+### CLAUDE.md
+
+The `CLAUDE.md` file provides project-specific instructions to Claude:
+- CLI commands
+- Architecture patterns
+- Naming conventions
+- Testing requirements
+
+Customize it for your project during `/setup` or edit manually.
+
+### skill-rules.json
+
+Maps keywords to skill names. Includes example configurations for common Salesforce skills:
+- `apex-best-practices`
+- `lwc-dev-guidelines`
+- `salesforce-flow-architect`
+- `salesforce-cli`
+- `agentforce`
+- `salesforce-integration-patterns`
+
+## Customization
+
+### Add Your Own Agent
 
 Create `.claude/agents/your-agent.md`:
 
@@ -177,9 +197,6 @@ Create `.claude/agents/your-agent.md`:
 ## Purpose
 What this agent does
 
-## Activation
-When to use it
-
 ## Process
 1. Step one
 2. Step two
@@ -188,36 +205,14 @@ When to use it
 What it produces
 ```
 
-### Modify CLAUDE.md
+### Add Skill Triggers
 
-Update `CLAUDE.md` with your project-specific:
-- Architecture patterns
-- Naming conventions
-- Testing requirements
-- Custom commands
-
-## Salesforce Architecture Reference
-
-The included `CLAUDE.md` defines standard Salesforce patterns:
-
-**Apex Layers:**
-- Triggers → Handler classes only
-- Handlers → Orchestrate Domain and Service
-- Services → Business logic
-- Selectors → SOQL queries
-- Domains → Object-specific logic
-
-**Naming Conventions:**
-- Triggers: `[Object]Trigger`
-- Handlers: `[Object]TriggerHandler`
-- Services: `[Feature]Service`
-- Test Classes: `[ClassName]Test`
-- LWC: `camelCase`
+Edit `.claude/hooks/skill-rules.json` to add triggers for your skills.
 
 ## Contributing
 
 1. Fork this repository
-2. Add your improvements
+2. Make your improvements
 3. Submit a pull request
 
 ## License

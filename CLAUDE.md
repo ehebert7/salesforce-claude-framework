@@ -49,32 +49,10 @@ force-app/
 - LWC: `camelCase`
 
 ## Task Management
-For large tasks, create dev docs: `dev/active/[task-name]/`
 
-## Skill Auto-Suggestion
+For large tasks, use `/dev-docs` to create implementation tracking docs in `dev/active/[task-name]/`.
 
-This framework suggests skills based on keywords. The following skills are referenced in `.claude/hooks/skill-rules.json`:
-
-### Agentforce
-- `agentforce-service-agent-setup`
-- `agentforce-service-agent-topics-actions`
-- `agentforce-service-agent-data-knowledge`
-- `agentforce-service-agent-testing-optimization`
-- `agentforce-service-agent-monitoring-analytics`
-
-### Salesforce Development
-- `apex-best-practices`
-- `salesforce-flow-architect`
-- `salesforce-cli`
-- `salesforce-agent-dx`
-- `salesforce-testing-api`
-
-### Additional
-- `lwc-dev-guidelines`
-- `salesforce-shield-security`
-- `salesforce-integration-patterns`
-
-> **Note:** Skills must be installed separately. The framework only suggests them based on prompt keywords.
+Before ending a session, run `/dev-docs-update` to save progress.
 
 ## Testing Requirements
 - Minimum 85% code coverage
