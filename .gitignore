@@ -1,0 +1,29 @@
+# Claude Code chat images (screenshots)
+.claude/claude-code-chat-images/
+
+# Local settings (may contain sensitive info)
+.claude/settings.local.json
+
+# Session files
+.mm/
+
+# Phi-scanner (separate repo)
+phi-scanner/
+
+# Windows system files
+nul
+Thumbs.db
+desktop.ini
+
+# OS generated files
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+
+# IDE
+.idea/
+*.swp
+*.swo
